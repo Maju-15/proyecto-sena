@@ -7,22 +7,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Control de Gastos Personales</h1>
-    <div id="app">
-        <div id="balance">Saldo Actual: $0.00</div>
+    <div class="container">
+        <h1>💰 Control de Gastos Personales 💰</h1>
+        <div id="balance">Saldo Actual: $0,00</div>
         <form id="transaction-form">
-            <input type="text" id="description" placeholder="Descripción" required>
-            <input type="number" id="amount" placeholder="Monto" required>
+            <label for="description">Descripción:</label>
+            <input type="text" id="description" placeholder="Ej: Pago de luz" required>
+            <label for="amount">Monto:</label>
+            <input type="text" id="amount" placeholder="Ej: 1.000,50" required>
+            <label for="category">Categoría:</label>
             <select id="category">
-                <option value="comida">Comida</option>
-                <option value="transporte">Transporte</option>
-                <option value="Arriendo">Arriendo</option>
-                <option value="salud">Otros</option>
+                <option value="comida">🍕 Comida</option>
+                <option value="transporte">🚗 Transporte</option>
+                <option value="arriendo">🏠 Arriendo</option>
+                <option value="servicios">💡 Servicios</option>
+                <option value="otros">🎲 Otros</option>
             </select>
-            <button type="submit">Agregar</button>
+            <button type="submit">➕ Agregar</button>
         </form>
         <div id="transactions">
-            <h2>Historial de Transacciones</h2>
+            <h2>📜 Historial de Transacciones</h2>
             <ul id="transaction-list"></ul>
         </div>
         <div id="chart-container">
