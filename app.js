@@ -1,22 +1,26 @@
 const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
+function formatCurrency(value) {
+    return new Intl.NumberFormat('es-ES', { style: 'decimal', minimumFractionDigits: 2 }).format(value);
+}
+
 function updateBalance() {
     const balance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
-    document.getElementById('balance').textContent = `Saldo Actual: $${balance.toFixed(2)}`;
+    document.getElementById('balance').textContent = `Saldo Actual: $${formatCurrency(balance)}`;
 }
 
 function renderTransactions() {
     const list = document.getElementById('transaction-list');
     list.innerHTML = transactions.map((transaction, index) => `
         <li>
-            ${transaction.description} - $${transaction.amount.toFixed(2)} (${transaction.category})
-            <button class="delete-btn" onclick="deleteTransaction(${index})">Borrar</button>
+            ${transaction.description} - $${formatCurrency(transaction.amount)} (${transaction.category})
+            <button class="delete-btn" onclick="deleteTransaction(${index})">🗑️ Borrar</button>
         </li>
     `).join('');
 }
 
 function addTransaction(description, amount, category) {
-    const transaction = { description, amount: parseFloat(amount), category };
+    const transaction = { description, amount: parseFloat(amount.replace('.', '').replace(',', '.')), category };
     transactions.push(transaction);
     localStorage.setItem('transactions', JSON.stringify(transactions));
     updateBalance();
@@ -25,11 +29,13 @@ function addTransaction(description, amount, category) {
 }
 
 function deleteTransaction(index) {
-    transactions.splice(index, 1); // Elimina la transacción del array
-    localStorage.setItem('transactions', JSON.stringify(transactions));
-    updateBalance();
-    renderTransactions();
-    updateChart();
+    if (confirm("¿Estás seguro de que quieres eliminar esta transacción?")) {
+        transactions.splice(index, 1);
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+        updateBalance();
+        renderTransactions();
+        updateChart();
+    }
 }
 
 document.getElementById('transaction-form').addEventListener('submit', (e) => {
@@ -37,31 +43,41 @@ document.getElementById('transaction-form').addEventListener('submit', (e) => {
     const description = document.getElementById('description').value;
     const amount = document.getElementById('amount').value;
     const category = document.getElementById('category').value;
+
+    if (!description || !amount || isNaN(parseFloat(amount.replace('.', '').replace(',', '.')))) {
+        alert("Por favor, ingresa una descripción y un monto válido.");
+        return;
+    }
+
     addTransaction(description, amount, category);
+    document.getElementById('transaction-form').reset();
 });
 
-updateBalance();
-renderTransactions();
+document.addEventListener('DOMContentLoaded', () => {
+    updateBalance();
+    renderTransactions();
+    updateChart();
+});
 
 const ctx = document.getElementById('chart').getContext('2d');
 const chart = new Chart(ctx, {
     type: 'pie',
     data: {
-        labels: ['Comida', 'Transporte', 'Arriendo', 'Otros'],
+        labels: ['Comida', 'Transporte', 'Arriendo', 'Servicios', 'Otros'],
         datasets: [{
             label: 'Gastos por Categoría',
-            data: [0, 0, 0, 0], // Inicialmente vacío
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            data: [0, 0, 0, 0, 0],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
         }]
     },
     options: {
         responsive: true,
-        maintainAspectRatio: false, // Permite ajustar el tamaño de la gráfica
+        maintainAspectRatio: false,
     }
 });
 
 function updateChart() {
-    const categories = ['comida', 'transporte', 'Arriendo', 'Otros'];
+    const categories = ['comida', 'transporte', 'arriendo', 'servicios', 'otros'];
     const data = categories.map(category => 
         transactions.filter(t => t.category === category).reduce((acc, t) => acc + t.amount, 0)
     );
