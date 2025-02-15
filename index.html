@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Control de Gastos Personales</h1>
+    <div id="app">
+        <div id="balance">Saldo Actual: $0.00</div>
+        <form id="transaction-form">
+            <input type="text" id="description" placeholder="Descripción" required>
+            <input type="number" id="amount" placeholder="Monto" required>
+            <select id="category">
+                <option value="comida">Comida</option>
+                <option value="transporte">Transporte</option>
+                <option value="Arriendo">Arriendo</option>
+                <option value="salud">Otros</option>
+            </select>
+            <button type="submit">Agregar</button>
+        </form>
+        <div id="transactions">
+            <h2>Historial de Transacciones</h2>
+            <ul id="transaction-list"></ul>
+        </div>
+        <div id="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
